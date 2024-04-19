@@ -3,12 +3,13 @@ const database = require('../util/database');
 
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price, id) {
+  constructor(title, imageUrl, description, price, id, userId) {
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
     this.description = description;
     this._id = id;
+    this.userId = userId;
   }
 
   save(){
