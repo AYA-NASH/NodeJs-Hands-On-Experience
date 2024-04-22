@@ -48,34 +48,36 @@ exports.getIndex = (req, res, next)=>{
 };
 
 exports.postCart = (req, res, next)=>{
-    // const prodId = req.body.productId;
-    // Product.findById(prodId)
-    // .then(product=>{
-    //     req.user.addToCart(product);
-    //     res.redirect('/cart');
-    // })
-    // .then(result=>{
-    //     console.log(result);
-    // })
-    // .catch(err=>{
-    //     console.log(err);
-    // });
+    const prodId = req.body.productId;
+    Product.findById(prodId)
+    .then(product=>{
+        req.user.addToCart(product);
+        res.redirect('/cart');
+    })
+    .then(result=>{
+        console.log(result);
+    })
+    .catch(err=>{
+        console.log(err);
+    });
     
 }
 
 exports.getCart = (req, res, next)=>{
-    // req.user.getCart()
-    // .then(products=>{
-    //     res.render('shop/cart',
-    //                 {
-    //                     pageTitle: 'Your Cart',
-    //                     path:'/cart',
-    //                     products: products
-    //                 });
-    // })
-    // .catch(err=>{
-    //     console.log(err)
-    // })
+    req.user
+    .populate('cart.items.productId')
+    .then(user=>{
+        const products = user.cart.items;
+        res.render('shop/cart',
+                    {
+                        pageTitle: 'Your Cart',
+                        path:'/cart',
+                        products: products
+                    });
+    })
+    .catch(err=>{
+        console.log(err)
+    })
 };
 
 exports.getCheckout = (req, res, next)=>{
@@ -111,15 +113,15 @@ exports.postOrder = (req, res, next)=>{
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
-    // const prodId = req.body.productId;
-    // req.user.deletCartItem(prodId)
-    // .then(result=>{
-    //     console.log('Product DELETED')
-    //     res.redirect('/cart');
-    // })
-    // .catch(err=>{
-    //     console.log(err);
-    // })
+    const prodId = req.body.productId;
+    req.user.deletCartItem(prodId)
+    .then(result=>{
+        console.log('Product DELETED')
+        res.redirect('/cart');
+    })
+    .catch(err=>{
+        console.log(err);
+    })
   };
 
 
