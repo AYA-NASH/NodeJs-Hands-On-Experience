@@ -1,12 +1,16 @@
+const path = require('path');
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose')
 
-const path = require('path');
 const errorController = require('./controllers/error');
+
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const mongoose = require('mongoose')
+const authRoutes = require('./routes/auth');
+
 const User = require('./models/user');
 
 app.set('view engine', 'ejs');
@@ -29,6 +33,7 @@ app.use((req,res, next)=>{
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
