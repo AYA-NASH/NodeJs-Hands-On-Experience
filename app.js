@@ -1,10 +1,10 @@
 const path = require('path');
 
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const session = require('express-session');
+const mongodbStore = require('connect-mongodb-session')(session);
 
 const errorController = require('./controllers/error');
 
@@ -14,24 +14,37 @@ const authRoutes = require('./routes/auth');
 
 const User = require('./models/user');
 
+const MONGODB_URI = 'mongodb+srv://ayanashaat99:H6rUIq2elSKY63gs@cluster0.u4n9mhf.mongodb.net/shop';
+
+const app = express();
+const store = new mongodbStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+})
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret:'my secret', resave:false, saveUninitialized:false}));
+app.use(
+    session({
+        secret:'my secret',
+        resave:false, 
+        saveUninitialized:false, 
+        store:store}));
 
-app.use((req,res, next)=>{
-    User.findById('6625555916b00f96126d626f')
-    .then(user=>{
-        req.user = user; 
-        next();
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+    .then(user => {
+    req.user = user;
+    next();
     })
-    .catch(err=>{
-        console.log(err);
-    })
-    
-})
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -39,25 +52,23 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 
-mongoose.connect('mongodb+srv://ayanashaat99:H6rUIq2elSKY63gs@cluster0.u4n9mhf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-.then(client=>{
-    return User.findOne()
-})
-.then(user=>{
-    if(!user){
+mongoose
+  .connect(MONGODB_URI)
+  .then(result => {
+    User.findOne().then(user => {
+      if (!user) {
         const user = new User({
-            name:'Aya',
-            email:'aya@gmail.com',
-            cart: {
-                items: []
-            }
+          name: 'Aya',
+          email: 'aya@gmail.com',
+          cart: {
+            items: []
+          }
         });
-        user.save()
-    }
-})
-.then(result=>{
+        user.save();
+      }
+    });
     app.listen(3000);
-})
-.catch(err=>{
-    console.log(err)
-})
+  })
+  .catch(err => {
+    console.log(err);
+  });

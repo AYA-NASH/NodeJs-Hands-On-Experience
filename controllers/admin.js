@@ -6,7 +6,7 @@ exports.getAddProduct = (req, res, next)=>{
                     pageTitle: "Add Product",
                     path:'/admin/add-product',
                     editing: false,
-                    isAuthenticated: req.loggedIn
+                    isAuthenticated: req.session.loggedIn
                 })
 };
 
@@ -50,7 +50,7 @@ exports.getEditProduct = (req, res, next)=>{
                     path:'/admin/add-product',
                     editing: editMode,
                     product: product,
-                    isAuthenticated: req.loggedIn
+                    isAuthenticated: req.session.loggedIn
                 });
     })
     .catch(err=>{
@@ -92,7 +92,7 @@ exports.getProducts = (req, res, next)=>{
                     prods: products,
                     pageTitle: "Admin Products",
                     path:'/admin/products',
-                    isAuthenticated: req.loggedIn
+                    isAuthenticated: req.session.loggedIn
                 });
     })
     .catch(err=>{

@@ -9,7 +9,7 @@ exports.getProducts = (req, res, next)=>{
                     prods: products,
                     pageTitle: "All Products",
                     path:'/products',
-                    isAuthenticated: req.loggedIn
+                    isAuthenticated: req.session.isLoggedIn
                 });
     })
     .catch(err=>{
@@ -25,7 +25,7 @@ exports.getProduct = (req, res, next)=>{
             product: product,
             pageTitle: product.title,
             path: '/products',
-            isAuthenticated: req.loggedIn
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err=>{
@@ -43,7 +43,7 @@ exports.getIndex = (req, res, next)=>{
                     prods: products,
                     pageTitle: "My Shop",
                     path:'/',
-                    isAuthenticated: req.loggedIn
+                    isAuthenticated: req.session.isLoggedIn
                 });
     })
     .catch(err=>{
@@ -77,7 +77,7 @@ exports.getCart = (req, res, next)=>{
                         pageTitle: 'Your Cart',
                         path:'/cart',
                         products: products,
-                        isAuthenticated: req.loggedIn
+                        isAuthenticated: req.session.isLoggedIn
                     });
     })
     .catch(err=>{
@@ -90,7 +90,7 @@ exports.getCheckout = (req, res, next)=>{
             {
                 pageTitle: 'Checkout',
                 path:'/checkout',
-                isAuthenticated: req.loggedIn
+                isAuthenticated:req.session.isLoggedIn
             });
 };
 
@@ -103,7 +103,7 @@ exports.getOrders = (req, res, next)=>{
             pageTitle: 'Your Orders',
             path:'/orders',
             orders: orders,
-            isAuthenticated: true
+            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err=> console.log(err))
