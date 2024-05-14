@@ -1,6 +1,6 @@
 const express = require('express');
 const {check, body} = require('express-validator')
-
+const bcrypt = require('bcryptjs');
 const authController = require('../controllers/auth');
 const User = require('../models/user');
 
@@ -9,7 +9,19 @@ const router = express.Router();
 router.get('/login', authController.getLogin);
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post('/login',
+[
+    check('email')
+    .custom((value, { req })=>{
+        return User.findOne({ email: value })
+        .then(user => {
+        if (!user) {
+            return Promise.reject('email does not exist');
+        }})
+    }),
+
+],
+ authController.postLogin);
 
 router.post('/signup',
         [
@@ -24,15 +36,18 @@ router.post('/signup',
                         return Promise.reject('E-mail already in use');
                         }
                     });
-            }),
+            })
+            .normalizeEmail(),
 
             body('password',
              'Please enter a password with at least 5 characters.'
             )
             .isLength({min:5})
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .trim(),
 
             body('confirmPassword')
+            .trim()
             .custom((value, { req })=>{
                 if(value !== req.body.password){
                     throw new Error('Passwords have to match!!!!');
