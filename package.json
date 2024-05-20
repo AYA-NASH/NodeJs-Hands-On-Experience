@@ -30,6 +30,7 @@
     "pdfkit": "^0.15.0",
     "postmark": "^4.0.2",
     "pug": "^3.0.2",
-    "sequelize": "^6.37.2"
+    "sequelize": "^6.37.2",
+    "stripe": "^15.7.0"
   }
 }
