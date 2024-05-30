@@ -4,10 +4,9 @@
 # ignore ALL files in ANY directory named temp
 temp/
 
-node_modules/
+Online-Shop/node_modules/
+Blog-Project/reactFrontendSetup/node_modules/
+Blog-Project/RestAPI/node_modules/
 
-images/
-
-./package.json
-
-./package-lock.json
+Online-Shop/images/
+Blog-Project/RestAPI/Images/
