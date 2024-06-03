@@ -70,7 +70,6 @@ exports.createPost = (req, res, next)=>{
     const imageUrl = req. file.path;
     let creator;
 
-    console.log("The Post Creator:\n", req.userId, '\n------------------------------------');
     const post = new Post({
         title: title,
         content: content,

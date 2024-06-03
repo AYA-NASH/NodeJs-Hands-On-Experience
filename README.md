@@ -28,4 +28,36 @@ An online shop application with checkout and payment functionalities.
   npm start
   ```
 
-### Blog-Project
+### [Blog Post Project](https://github.com/AYA-NASH/NodeJs-Hands-On-Experience/tree/main/Blog-Project)
+This project focuses on building the backend service for a Blog-Post application using Node.js, Express, and MongoDB. The frontend is a pre-prepared React module, and our work centers on backend development and integration.
+
+#### Features
+- Set up routes for posts and resolved CORS errors for frontend-backend communication.
+- Created Post and User models using Mongoose.
+- Implemented CRUD operations for posts, handling both JSON and FormData requests.
+- Developed user authentication and authorization with JWT.
+- Linked users to their posts and managed authorization for post operations.
+
+#### How to Run
+
+#### 1. Frontend Module:
+Install dependencies and Run the application:
+```
+npm install
+npm start
+```
+**Note**\
+
+In case of react legacy problem with node appeared, run the following:
+
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+#### 2. Backend Module:
+
+Install dependencies and Run the application:
+
+```
+npm install
+nodemon app.js
+```
