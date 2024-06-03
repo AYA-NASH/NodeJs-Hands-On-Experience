@@ -41,7 +41,7 @@ exports.login = (req, res, next)=>{
     const email = req.body.email;
     const password = req.body.password;
     let loadedUser;
-    User.findOne({email: email})
+    User.findOne({ email: email })
     .then(user=>{
         if(!user){
             const error = new Error("Couldn't find a User with the provided email!!")
@@ -49,7 +49,7 @@ exports.login = (req, res, next)=>{
             throw error
         }
         loadedUser = user;
-        return bcrypt.compare(password, user.password)
+        return bcrypt.compare(password, user.password);
     })
     .then(isEqual=>{
         if(!isEqual){
@@ -59,14 +59,13 @@ exports.login = (req, res, next)=>{
         }
         const token = jwt.sign(
             {
-                email: loadedUser.email,
-                useerId: loadedUser._id.toString()
+              email: loadedUser.email,
+              userId: loadedUser._id.toString()
             },
             'secreet',
-            {expiresIn: '1h'}
-        )
-
-        res.status(200).json({token: token, userId: loadedUser._id.toString()})
+            { expiresIn: '1h' }
+          );
+          res.status(200).json({ token: token, userId: loadedUser._id.toString() });
 
     })
     .catch(err=>{

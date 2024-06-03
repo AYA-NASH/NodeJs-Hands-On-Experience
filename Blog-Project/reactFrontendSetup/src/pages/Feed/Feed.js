@@ -183,7 +183,7 @@ class Feed extends Component {
     this.setState({ postsLoading: true });
     fetch('http://localhost:8080/feed/post/'+postId, {
       method: 'DELETE',
-      headers: {
+            headers: {
         Authorization: 'Bearer ' + this.props.token 
       }
     })
