@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Post = require('../models/post');
 
+const { clearImage } = require('../util/file'); 
+
 module.exports = {
     createUser: async function({ userInput }, req){
         const errors = []
@@ -157,5 +159,114 @@ module.exports = {
         createdAt: post.createdAt.toISOString(),
         updatedAt: post.updatedAt.toISOString() 
       };
+    },
+
+    updatePost: async function({id, postInput}, req){
+      if(!req.isAuth){
+        const err = new Error('Not Authenticated.')
+        err.code = 401;
+        throw err;
+      }
+
+      const post = await Post.findById(id).populate('creator');
+      
+      if(post.creator._id.toString() !== req.userId.toString()){
+        const err = new Error('Not Authenticated.')
+        err.code = 403;
+        throw err;
+      }
+
+      const errors = []
+      if(validator.isEmpty(postInput.title) ||
+      !validator.isLength(postInput.title, {min: 5})){
+          errors.push({message: 'Invalid Title'})
+      }
+      if (
+          validator.isEmpty(postInput.content) ||
+          !validator.isLength(postInput.content, { min: 5 })
+        ) {
+          errors.push({ message: 'Invalid Content text' });
+      }
+      if (errors.length > 0){
+          const error = new Error('Invalid Post Data')
+          error.data = errors;
+          error.code = 422;
+          throw error;
+      }
+      console.log("RESOLVER PART!!!\nPostInput Image URL: ", postInput.imageUrl);
+      post.title = postInput.title;
+      if(postInput.imageUrl !== 'undefined'){
+        post.imageUrl = postInput.imageUrl;
+      }
+      post.content = postInput.content;
+
+      const upatedPost = await post.save();
+
+      return {
+        ...upatedPost._doc,
+        _id: upatedPost._id.toString(),
+        createdAt: upatedPost.createdAt.toISOString(),
+        updatedAt: upatedPost.updatedAt.toISOString()
+      }
+    },
+
+    deletePost: async function({ id }, req){
+      if(!req.isAuth){
+        const err = new Error('Not Authenticated.')
+        err.code = 401;
+        throw err;
+      }
+
+      const post = await Post.findById(id);
+      if(post.creator.toString() !== req.userId.toString()){
+        const err = new Error('Not Authenticated.')
+        err.code = 403;
+        throw err;
+      }
+      clearImage(post.imageUrl);
+      await Post.findByIdAndDelete(id);
+
+      const user = await User.findById(req.userId);
+      user.posts.pull(id);
+      await user.save();
+      return true;
+    },
+
+    user: async function(args, req){
+      if(!req.isAuth){
+        const err = new Error('Not Authenticated.')
+        err.code = 401;
+        throw err;
+      }
+
+      const user = await User.findById(req.userId);
+
+      if(!user){
+        const err = new Error('No User Found!.');
+        err.code = 404;
+        throw err;
+      }
+
+      return {...user._doc, _id: user._id.toString()};
+    },
+  
+    updateStatus: async function({ status }, req){
+      if(!req.isAuth){
+        const err = new Error('Not Authenticated.')
+        err.code = 401;
+        throw err;
+      }
+
+      const user = await User.findById(req.userId);
+
+      if(!user){
+        const err = new Error('No User Found!.');
+        err.code = 404;
+        throw err;
+      }
+
+      user.status = status;
+      await user.save();
+      return {...user._doc, _id: user._id.toString()}
     }
-}
+  }

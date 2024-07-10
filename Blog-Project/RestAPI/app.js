@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -9,7 +9,7 @@ const { graphqlHTTP } = require('express-graphql');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 const auth = require('./middleware/auth');
-
+const { clearImage } = require('./util/file');
 const app = express();
 
 const fileStorage = multer.diskStorage({
@@ -61,6 +61,7 @@ app.put('/post-image', (req, res, next)=>{
     if(req.body.oldPath){
         clearImage(req.body.oldPath)
     }
+    console.log('Image Stored!!\nImage PATH:\n',req.file.path )
     return res.status(201).json({message: "file stored", filePath: req.file.path});
 });
 
@@ -99,7 +100,3 @@ mongoose.connect(
     console.log(err);
 })
 
-const clearImage = filePath =>{     // call whenever a new Image uploaded
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err=> console.log(err));
-}
